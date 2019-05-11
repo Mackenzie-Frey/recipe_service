@@ -4,6 +4,7 @@ var Recipe = require('../../../models').Recipe;
 var BoringQuery = require('../../../models').BoringQuery;
 var BoringQueryRecipe = require('../../../models').BoringQueryRecipe;
 const fetch = require('node-fetch');
+require('dotenv').config()
 pry = require('pryjs');
 
 router.get("/", async (req, res, next) => {
@@ -20,12 +21,15 @@ router.get("/", async (req, res, next) => {
         }
       })
       if (!boringQueryInstance) {
-        // fetch from Recipe from Edamam using query from the param
+        // fetch the recipe from Edamam using the query from the param
         const appId = process.env.edamam_id
         const appKey = process.env.edamam_key
         url = `https://api.edamam.com/search?q=chicken&app_id=${appId}&app_key=${appKey}&calories=2000-999999`
         const recipeResponse = await fetch(url)
+        const recipes = parse(recipeResponse)
+        // Save objects to database in all 3 tables,
 
+        res.status(200).send(JSON.stringify(recipes))
       } else {
         // find the matching recipes
         try {
@@ -64,5 +68,10 @@ router.get("/", async (req, res, next) => {
     }
   }
 })
+
+function parse(recipeResponse) {
+
+  return recipeResponse
+}
 
 module.exports = router;
