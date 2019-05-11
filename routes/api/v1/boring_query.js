@@ -26,7 +26,9 @@ router.get("/", async (req, res, next) => {
         const appKey = process.env.edamam_key
         url = `https://api.edamam.com/search?q=chicken&app_id=${appId}&app_key=${appKey}&calories=2000-999999`
         const recipeResponse = await fetch(url)
-        const recipes = parse(recipeResponse)
+        recipeResponse.body
+
+        // const recipes = parseRecipes(recipeResponse)
         // Save objects to database in all 3 tables,
 
         res.status(200).send(JSON.stringify(recipes))
@@ -41,6 +43,8 @@ router.get("/", async (req, res, next) => {
           })
           try {
             // use the array of recipe id's to look at the Recipe table
+
+            // Make sure to check if the recipe is already saved to the database base on the unique name
 
             // HOW TO YOU DO THIS FOR A PROMISE>ALL ... for the array of recipes
             const recipes = await Recipe.findAll({
@@ -69,7 +73,7 @@ router.get("/", async (req, res, next) => {
   }
 })
 
-function parse(recipeResponse) {
+function parseRecipes(recipeResponse) {
 
   return recipeResponse
 }
