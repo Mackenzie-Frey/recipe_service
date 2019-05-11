@@ -8,7 +8,7 @@ pry = require('pryjs');
 
 router.get("/", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
-  const query = req.query.query
+  const query = req.query.query.toLowerCase()
   if (!query) {
     res.status(404).send()
   } else {
@@ -21,6 +21,11 @@ router.get("/", async (req, res, next) => {
       })
       if (!boringQueryInstance) {
         // fetch from Recipe from Edamam using query from the param
+        const appId = process.env.edamam_id
+        const appKey = process.env.edamam_key
+        url = `https://api.edamam.com/search?q=chicken&app_id=${appId}&app_key=${appKey}&calories=2000-999999`
+        const recipeResponse = await fetch(url)
+
       } else {
         // find the matching recipes
         try {
