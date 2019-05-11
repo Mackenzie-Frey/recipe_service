@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     RecipeId: DataTypes.INTEGER
   }, {});
   BoringQueryRecipe.associate = function(models) {
-    BoringQueryRecipe.belongTo(models.BoringQuery)
-    BoringQueryRecipe.belongTo(models.Recipe)
+    BoringQueryRecipe.belongsTo(models.BoringQuery)
+    BoringQueryRecipe.belongsTo(models.Recipe)
   };
   return BoringQueryRecipe;
 };
