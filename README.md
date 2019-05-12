@@ -30,8 +30,8 @@ $ npx sequelize db:seed:all # Run seed file for seeding database
 
 Create a `.env` file in the root directory of the project. Add `.env` to the `.gitignore` file. Make sure to insert the secret key without the alligator clips ( < > ).
 ```
-edamam_id=<edamam_id>
-edamam_key=<edamam_key>
+EDAMAM_ID=<edamam_id>
+EDAMAM_KEY=<edamam_key>
 ```
 
 ## Running Tests
