@@ -103,21 +103,23 @@ function parseRecipes(recipeResponse, query) {
 
 function saveRecipe(recipe, query){
   return new Promise((resolve, reject) => {
-    Recipe.create({
-      name: recipe.recipe.label,
-      url: recipe.recipe.url,
-      yield: recipe.recipe.yield,
-      calories: Math.round((recipe.recipe.calories / recipe.recipe.yield)),
-      image: recipe.recipe.image,
-      totalTime: recipe.recipe.totalTime
+    Recipe.findOrCreate({
+      where: {name: recipe.recipe.label},
+      defaults: {
+        url: recipe.recipe.url,
+        yield: recipe.recipe.yield,
+        calories: Math.round((recipe.recipe.calories / recipe.recipe.yield)),
+        image: recipe.recipe.image,
+        totalTime: recipe.recipe.totalTime
+      }
     })
-    .then(newRecipe => {
+    .then(recipe => {
       BoringQueryRecipe.create({
         BoringQueryId: query.id,
-        RecipeId: newRecipe.id
+        RecipeId: recipe[0].id
       })
       .then(() => {
-        resolve(newRecipe)
+        resolve(recipe[0])
       })
     })
     .catch((error) => {
