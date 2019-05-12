@@ -47,6 +47,7 @@ router.get("/", async (req, res, next) => {
         Recipe.findAll({
           include: [{
             model: BoringQueryRecipe,
+            attributes: [],
             where: {
               BoringQueryId: query.id
             }
