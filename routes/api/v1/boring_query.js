@@ -11,9 +11,26 @@ router.get("/", async (req, res, next) => {
   if (!req.query.query) {
     res.status(404).send({error: "Missing recipe search query."})
   } else {
-    const searchQuery = req.query.query.toLowerCase()
+    const searchQuery = req.query.query.toLowerCase();
+    // create url for Edamam using the query from the param
+    const appId = process.env.EDAMAM_ID
+    const appKey = process.env.EDAMAM_KEY
+    url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&calories=2000-999999&to=30`
+
+    return findOrFetchRecipes(searchQuery, BoringQuery, url, BoringQueryRecipe)
+    .then(recipes => {
+      res.status(200).send(JSON.stringify(recipes))
+    })
+    .catch(error => {
+      res.status(404).send({error: error})
+    })
+  }
+})
+
+function findOrFetchRecipes(searchQuery, queryModel, url, queryRecipeModel){
+  return new Promise((resolve, reject) => {
     // look in the BoringQuery table for an existing query matching the request
-    BoringQuery.findOne({
+    queryModel.findOne({
       where: {
         query: searchQuery
       }
@@ -21,32 +38,28 @@ router.get("/", async (req, res, next) => {
     .then(query => {
       //if it is a new query
       if (!query) {
-        // create url for Edamam using the query from the param
-        const appId = process.env.EDAMAM_ID
-        const appKey = process.env.EDAMAM_KEY
-        url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&calories=2000-999999&to=30`
-
         //fetch new recipes from edamam api
         getRecipes(url)
         .then(recipeResponse => {
           //create BoringQuery, Recipes, and BoringQueryRecipes in database
-          return saveBoringRecipes(recipeResponse, searchQuery);
+          return saveBoringRecipes(recipeResponse, searchQuery, queryModel, queryRecipeModel);
         })
         .then(recipes => {
           //Send newly retrieved recipes. Sort by highest calorie total and only top 10 results.
           recipes.sort((a, b) => b.calories - a.calories);
           recipes = recipes.slice(0, 10);
-          res.status(200).send(JSON.stringify(recipes))
+          //res.status(200).send(JSON.stringify(recipes))
+          resolve(recipes)
         })
         .catch(error => {
-          res.status(404).send({error: error})
+          reject(error)
         })
       //If an existing query is found
       } else {
         // find the recipes that are already associated with the existing query
         Recipe.findAll({
           include: [{
-            model: BoringQueryRecipe,
+            model: queryRecipeModel,
             attributes: [],
             where: {
               BoringQueryId: query.id
@@ -57,18 +70,20 @@ router.get("/", async (req, res, next) => {
         })
         .then(recipes => {
           //Send retrieved recipes.
-          res.status(200).send(JSON.stringify(recipes))
+          resolve(recipes)
         })
         .catch(error => {
-          res.status(404).send({error: error})
+          reject(error)
         })
       }
     })
     .catch(error => {
-      res.status(404).send({error: "Bad search query."})
+      error = "Bad search query."
+      reject(error)
     })
-  }
-})
+  })
+};
+
 
 function getRecipes(url){
   return new Promise((resolve, reject) => {
@@ -83,13 +98,13 @@ function getRecipes(url){
   })
 };
 
-function saveBoringRecipes(recipeResponse, searchQuery){
+function saveBoringRecipes(recipeResponse, searchQuery, queryModel, queryRecipeModel){
   return new Promise((resolve, reject) => {
-    BoringQuery.create({
+    queryModel.create({
       query: searchQuery
     })
     .then(query => {
-      resolve(parseRecipes(recipeResponse, query));
+      resolve(parseRecipes(recipeResponse, query, queryRecipeModel));
     })
     .catch(error => {
       reject(error)
@@ -97,13 +112,13 @@ function saveBoringRecipes(recipeResponse, searchQuery){
   })
 };
 
-function parseRecipes(recipeResponse, query) {
+function parseRecipes(recipeResponse, query, queryRecipeModel) {
   return Promise.all(recipeResponse.hits.map(recipe => {
-    return saveRecipe(recipe, query);
+    return saveRecipe(recipe, query, queryRecipeModel);
   }))
 };
 
-function saveRecipe(recipe, query){
+function saveRecipe(recipe, query, queryRecipeModel){
   return new Promise((resolve, reject) => {
     Recipe.findOrCreate({
       where: {name: recipe.recipe.label},
@@ -116,7 +131,7 @@ function saveRecipe(recipe, query){
       }
     })
     .then(recipe => {
-      BoringQueryRecipe.create({
+      queryRecipeModel.create({
         BoringQueryId: query.id,
         RecipeId: recipe[0].id
       })
