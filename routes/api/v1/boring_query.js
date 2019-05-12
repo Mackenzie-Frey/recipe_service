@@ -4,7 +4,6 @@ var Recipe = require('../../../models').Recipe;
 var BoringQuery = require('../../../models').BoringQuery;
 var BoringQueryRecipe = require('../../../models').BoringQueryRecipe;
 const fetch = require('node-fetch');
-pry = require('pryjs');
 
 router.get("/", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
