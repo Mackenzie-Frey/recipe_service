@@ -35,7 +35,7 @@ router.get("/", async (req, res, next) => {
         .then(recipes => {
           //Send newly retrieved recipes. Sort by highest calorie total and only top 10 results.
           recipes.sort((a, b) => b.calories - a.calories);
-          recipes.slice(0, 9);
+          recipes = recipes.slice(0, 10);
           res.status(200).send(JSON.stringify(recipes))
         })
         .catch(error => {
