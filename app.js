@@ -7,6 +7,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var boringQueryRouter = require('./routes/api/v1/boring_query');
+var heartAttackQueryRouter = require('./routes/api/v1/heart_attack_query');
 
 var app = express();
 
@@ -18,5 +19,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/api/v1/recipes', boringQueryRouter);
+app.use('/api/v1/recipes/heart-attack', heartAttackQueryRouter);
 
 module.exports = app;
