@@ -12,80 +12,58 @@ router.get("/", async (req, res, next) => {
     res.status(404).send({error: "Missing recipe search query."})
   } else {
     const searchQuery = req.query.query.toLowerCase()
-      // look in the BoringQuery table
+    // look in the BoringQuery table for an existing query matching the request
     BoringQuery.findOne({
       where: {
         query: searchQuery
       }
     })
     .then(query => {
+      //if it is a new query
       if (!query) {
-        // fetch the recipes from Edamam using the query from the param
+        // create url for Edamam using the query from the param
         const appId = process.env.EDAMAM_ID
         const appKey = process.env.EDAMAM_KEY
         url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&calories=2000-999999`
 
+        //fetch new recipes from edamam api
         getRecipes(url)
         .then(recipeResponse => {
-          saveBoringRecipes(recipeResponse, searchQuery)
-          .then(query => {
-            Recipe.findAll({
-              include: [{
-                model: BoringQueryRecipe,
-                where: {
-                  BoringQueryId: query.id
-                }
-              }]
-              //order: [['calories', 'DESC']],
-              //limit: 10
-            })
-
-            .then(tests => {
-              res.status(200).send(JSON.stringify(tests))
-            })
-            .catch(error => {
-              res.status(404).send({error: "test"})
-            })
-          })
-          .catch(error => {
-            res.status(404).send({error: "other error"})
-          })
+          //create BoringQuery, Recipes, and BoringQueryRecipes in database
+          return saveBoringRecipes(recipeResponse, searchQuery);
+        })
+        .then(recipes => {
+          //Send newly retrieved recipes. Sort by highest calorie total and only top 10 results.
+          //This code is being saved for use in a later compenent.
+          // return Recipe.findAll({
+          //   include: [{
+          //     model: BoringQueryRecipe,
+          //     where: {
+          //       BoringQueryId: query.id
+          //     }
+          //   }]
+          //   //order: [['calories', 'DESC']],
+          //   //limit: 10
+          // })
+          recipes.sort((a, b) => b.calories - a.calories);
+          recipes.slice(0, 9);
+          res.status(200).send(JSON.stringify(recipes))
         })
         .catch(error => {
-          res.status(404).send({error: "Didnt save recipes"})
+          res.status(404).send({error: error})
         })
+      //If an existing query is found
       } else {
-        // find the matching recipes
+        // find the recipes that are already associated with the existing query
         try {
-          // look in the joins table
-          // BoringQueryRecipe.findAll({
-          //   where: {
-          //     BoringQueryId: query.id
-          //   }
-          // })
-          // .then()
-          // try {
-          //   // use the array of recipe id's to look at the Recipe table
-          //
-          //   // Make sure to check if the recipe is already saved to the database base on the unique name
-          //
-          //   // HOW TO YOU DO THIS FOR A PROMISE>ALL ... for the array of recipes
-          //   const recipes = await Recipe.findAll({
-          //     where: {
-          //       id: boringQueryRecipeInstances.id
-          //       // need to iterate through the above line or something
-          //     }
-          //   })
-
+          // look in the recipes table with includes, where, order, and limit
         } catch (error) {
-          res.status(500).send({
-            error: "test error"
-          })
+          res.status(404).send({error: error})
         }
       }
     })
     .catch(error => {
-      res.status(404).send({error: "Bad Edamam request. Missing credentials."})
+      res.status(404).send({error: "Bad search query."})
     })
   }
 })
@@ -109,30 +87,7 @@ function saveBoringRecipes(recipeResponse, searchQuery){
       query: searchQuery
     })
     .then(query => {
-
-      recipeResponse.hits.forEach(recipe => {
-        Recipe.create({
-          name: recipe.recipe.label,
-          url: recipe.recipe.url,
-          yield: recipe.recipe.yield,
-          calories: Math.round((recipe.recipe.calories / recipe.recipe.yield)),
-          image: recipe.recipe.image,
-          totalTime: recipe.recipe.totalTime
-        })
-        .then(newRecipe => {
-          BoringQueryRecipe.create({
-            BoringQueryId: query.id,
-            RecipeId: newRecipe.id
-          })
-          .then(() => {
-            return
-          })
-        })
-        .catch((error) => {
-          return
-        })
-      })
-      resolve(query)
+      resolve(parseRecipes(recipeResponse, query));
     })
     .catch(error => {
       reject(error)
@@ -140,9 +95,35 @@ function saveBoringRecipes(recipeResponse, searchQuery){
   })
 };
 
-function parseRecipes(recipeResponse) {
+function parseRecipes(recipeResponse, query) {
+  return Promise.all(recipeResponse.hits.map(recipe => {
+    return saveRecipe(recipe, query);
+  }))
+};
 
-  return recipeResponse
-}
+function saveRecipe(recipe, query){
+  return new Promise((resolve, reject) => {
+    Recipe.create({
+      name: recipe.recipe.label,
+      url: recipe.recipe.url,
+      yield: recipe.recipe.yield,
+      calories: Math.round((recipe.recipe.calories / recipe.recipe.yield)),
+      image: recipe.recipe.image,
+      totalTime: recipe.recipe.totalTime
+    })
+    .then(newRecipe => {
+      BoringQueryRecipe.create({
+        BoringQueryId: query.id,
+        RecipeId: newRecipe.id
+      })
+      .then(() => {
+        resolve(newRecipe)
+      })
+    })
+    .catch((error) => {
+      reject(error)
+    })
+  })
+};
 
 module.exports = router;
