@@ -34,17 +34,6 @@ router.get("/", async (req, res, next) => {
         })
         .then(recipes => {
           //Send newly retrieved recipes. Sort by highest calorie total and only top 10 results.
-          //This code is being saved for use in a later compenent.
-          // return Recipe.findAll({
-          //   include: [{
-          //     model: BoringQueryRecipe,
-          //     where: {
-          //       BoringQueryId: query.id
-          //     }
-          //   }]
-          //   //order: [['calories', 'DESC']],
-          //   //limit: 10
-          // })
           recipes.sort((a, b) => b.calories - a.calories);
           recipes.slice(0, 9);
           res.status(200).send(JSON.stringify(recipes))
@@ -55,11 +44,23 @@ router.get("/", async (req, res, next) => {
       //If an existing query is found
       } else {
         // find the recipes that are already associated with the existing query
-        try {
-          // look in the recipes table with includes, where, order, and limit
-        } catch (error) {
+        Recipe.findAll({
+          include: [{
+            model: BoringQueryRecipe,
+            where: {
+              BoringQueryId: query.id
+            }
+          }],
+          order: [['calories', 'DESC']],
+          limit: 10
+        })
+        .then(recipes => {
+          //Send retrieved recipes.
+          res.status(200).send(JSON.stringify(recipes))
+        })
+        .catch(error => {
           res.status(404).send({error: error})
-        }
+        })
       }
     })
     .catch(error => {
