@@ -14,7 +14,7 @@ router.get("/", async (req, res, next) => {
     // create url for Edamam using the query from the param
     const appId = process.env.EDAMAM_ID
     const appKey = process.env.EDAMAM_KEY
-    url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&calories=2000-999999&to=30`
+    const url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&calories=2000-999999&to=30`
 
     return findOrFetchRecipes(searchQuery, BoringQuery, url, BoringQueryRecipe)
     .then(recipes => {
