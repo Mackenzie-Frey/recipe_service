@@ -12,17 +12,21 @@ describe('HeartAttackQuery Recipe index API', () => {
     test('it should return a 200 status', () => {
       return request(app).get("/api/v1/recipes/heart-attack?query=chicken").then(response => {
         expect(response.status).toBe(200)
+        expect(response.body).toBeInstanceOf(Array)
+        expect(response.body.length).toEqual(10)
+        expect(Object.keys(response.body[0])).toContain('id')
+        expect(Object.keys(response.body[0])).toContain('url')
+        expect(Object.keys(response.body[0])).toContain('yield')
+        expect(Object.keys(response.body[0])).toContain('calories')
+        expect(Object.keys(response.body[0])).toContain('image')
+        expect(Object.keys(response.body[0])).toContain('totalTime')
+        expect(Object.keys(response.body[0])).toContain('name')
       });
     });
 
-    // test.skip('it should return an array of recipe objects', () => {
-    //   return request(app).get("/api/v1/recipes/heart-attack?query=chicken").then(response => {
-    //     expect(response.body).toBeInstanceOf(Array),
-    //       // expect(response.body.length).toEqual(8),
-    //       // expect(Object.keys(response.body[0])).toContain('name'),
-    //       // expect(Object.keys(response.body[0])).toContain('calories')
-    //   });
-    // });
+    //Test for query, recipes and queryRecipe additions to database (1, 30, 30 respectively)
+    //Test repeat query. Same response as original.
+    //Test database entries after and that number of entries in database hasn't changed.
 
     test.skip('it should return a 404 status when unsuccessful', () => {
       return request(app).get("/bad_path").then(response => {

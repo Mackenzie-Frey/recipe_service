@@ -24,7 +24,9 @@ describe('BBQuery Recipe index API', () => {
       });
     });
 
-    //Test for query, recipes and queryRecipe additions to database
+    //Test for query, recipes and queryRecipe additions to database (1, 30, 30 respectively)
+    //Test repeat query. Same response as original.
+    //Test database entries after and that number of entries in database hasn't changed.
 
     test('it should return a 404 status when unsuccessful', () => {
       return request(app).get("/bad_path").then(response => {
