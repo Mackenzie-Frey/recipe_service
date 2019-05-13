@@ -4,6 +4,7 @@ var Recipe = require('../../../models').Recipe;
 var BoringQuery = require('../../../models').BoringQuery;
 var BoringQueryRecipe = require('../../../models').BoringQueryRecipe;
 const fetch = require('node-fetch');
+var pry = require('pryjs');
 
 router.get("/", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
@@ -41,7 +42,7 @@ function findOrFetchRecipes(searchQuery, queryModel, url, queryRecipeModel){
         getRecipes(url)
         .then(recipeResponse => {
           //create BoringQuery, Recipes, and BoringQueryRecipes in database
-          return saveBoringRecipes(recipeResponse, searchQuery, queryModel, queryRecipeModel);
+          return createQuery(recipeResponse, searchQuery, queryModel, queryRecipeModel);
         })
         .then(recipes => {
           //Send newly retrieved recipes. Sort by highest calorie total and only top 10 results.
@@ -58,10 +59,10 @@ function findOrFetchRecipes(searchQuery, queryModel, url, queryRecipeModel){
         // find the recipes that are already associated with the existing query
         Recipe.findAll({
           include: [{
-            model: queryRecipeModel,
+            model: queryModel,
             attributes: [],
             where: {
-              BoringQueryId: query.id
+              id: query.id
             }
           }],
           order: [['calories', 'DESC']],
@@ -83,7 +84,6 @@ function findOrFetchRecipes(searchQuery, queryModel, url, queryRecipeModel){
   })
 };
 
-
 function getRecipes(url){
   return new Promise((resolve, reject) => {
     fetch(url)
@@ -97,7 +97,7 @@ function getRecipes(url){
   })
 };
 
-function saveBoringRecipes(recipeResponse, searchQuery, queryModel, queryRecipeModel){
+function createQuery(recipeResponse, searchQuery, queryModel, queryRecipeModel){
   return new Promise((resolve, reject) => {
     queryModel.create({
       query: searchQuery
@@ -113,11 +113,11 @@ function saveBoringRecipes(recipeResponse, searchQuery, queryModel, queryRecipeM
 
 function parseRecipes(recipeResponse, query, queryRecipeModel) {
   return Promise.all(recipeResponse.hits.map(recipe => {
-    return saveRecipe(recipe, query, queryRecipeModel);
+    return createRecipe(recipe, query, queryRecipeModel);
   }))
 };
 
-function saveRecipe(recipe, query, queryRecipeModel){
+function createRecipe(recipe, query, queryRecipeModel){
   return new Promise((resolve, reject) => {
     Recipe.findOrCreate({
       where: {name: recipe.recipe.label},
@@ -130,13 +130,31 @@ function saveRecipe(recipe, query, queryRecipeModel){
       }
     })
     .then(recipe => {
-      queryRecipeModel.create({
-        BoringQueryId: query.id,
-        RecipeId: recipe[0].id
-      })
-      .then(() => {
-        resolve(recipe[0])
-      })
+      if(queryRecipeModel === BoringQueryRecipe){
+        queryRecipeModel.create({
+          BoringQueryId: query.id,
+          RecipeId: recipe[0].id
+        })
+        .then(() => {
+          resolve(recipe[0])
+        })
+      }else if(queryRecipeModel === HeartAttackQueryRecipe){
+        queryRecipeModel.create({
+          HeartAttackQueryId: query.id,
+          RecipeId: recipe[0].id
+        })
+        .then(() => {
+          resolve(recipe[0])
+        })
+      }else if(queryRecipeModel === BBQueryRecipe){
+        queryRecipeModel.create({
+          BBQueryId: query.id,
+          RecipeId: recipe[0].id
+        })
+        .then(() => {
+          resolve(recipe[0])
+        })
+      }
     })
     .catch((error) => {
       reject(error)
