@@ -4,6 +4,7 @@ var Recipe = require('../../../models').Recipe;
 var BoringQuery = require('../../../models').BoringQuery;
 var BoringQueryRecipe = require('../../../models').BoringQueryRecipe;
 const fetch = require('node-fetch');
+var pry = require('pryjs');
 
 router.get("/", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
@@ -83,7 +84,6 @@ function findOrFetchRecipes(searchQuery, queryModel, url, queryRecipeModel){
   })
 };
 
-
 function getRecipes(url){
   return new Promise((resolve, reject) => {
     fetch(url)
@@ -130,13 +130,31 @@ function createRecipe(recipe, query, queryRecipeModel){
       }
     })
     .then(recipe => {
-      queryRecipeModel.create({
-        BoringQueryId: query.id,
-        RecipeId: recipe[0].id
-      })
-      .then(() => {
-        resolve(recipe[0])
-      })
+      if(queryRecipeModel === BoringQueryRecipe){
+        queryRecipeModel.create({
+          BoringQueryId: query.id,
+          RecipeId: recipe[0].id
+        })
+        .then(() => {
+          resolve(recipe[0])
+        })
+      }else if(queryRecipeModel === HeartAttackQueryRecipe){
+        queryRecipeModel.create({
+          HeartAttackQueryId: query.id,
+          RecipeId: recipe[0].id
+        })
+        .then(() => {
+          resolve(recipe[0])
+        })
+      }else if(queryRecipeModel === BBQueryRecipe){
+        queryRecipeModel.create({
+          BBQueryId: query.id,
+          RecipeId: recipe[0].id
+        })
+        .then(() => {
+          resolve(recipe[0])
+        })
+      }
     })
     .catch((error) => {
       reject(error)
