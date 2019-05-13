@@ -3,6 +3,8 @@ var router = express.Router();
 var Recipe = require('../../../models').Recipe;
 var BoringQuery = require('../../../models').BoringQuery;
 var BoringQueryRecipe = require('../../../models').BoringQueryRecipe;
+var HeartAttackQuery = require('../../../models').HeartAttackQuery;
+var HeartAttackQueryRecipe = require('../../../models').HeartAttackQueryRecipe;
 const fetch = require('node-fetch');
 var pry = require('pryjs');
 
@@ -15,7 +17,7 @@ router.get("/", async (req, res, next) => {
     // create url for Edamam using the query from the param
     const appId = process.env.EDAMAM_ID
     const appKey = process.env.EDAMAM_KEY
-    var url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&calories=2000-999999&to=30`
+    var url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&to=30`
 
     return findOrFetchRecipes(searchQuery, BoringQuery, url, BoringQueryRecipe)
     .then(recipes => {
@@ -25,7 +27,29 @@ router.get("/", async (req, res, next) => {
       res.status(404).send({error: error})
     })
   }
-})
+});
+
+router.get("/heart-attack", async (req, res, next) => {
+  res.setHeader("Content-Type", "application/json");
+  if (!req.query.query) {
+    res.status(404).send({error: "Missing recipe search query."})
+  } else {
+    const searchQuery = req.query.query.toLowerCase();
+    // create url for Edamam using the query from the param
+    const appId = process.env.EDAMAM_ID
+    const appKey = process.env.EDAMAM_KEY
+    const recipeFilter = '&nutrientsFAT=1200+&nutrientsNA=5000+&nutrientsSUGAR=300+'
+    var url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&calories=2000-999999&to=30` + recipeFilter
+
+    return findOrFetchRecipes(searchQuery, HeartAttackQuery, url, HeartAttackQueryRecipe)
+    .then(recipes => {
+      res.status(200).send(JSON.stringify(recipes))
+    })
+    .catch(error => {
+      res.status(404).send({error: error})
+    })
+  }
+});
 
 function findOrFetchRecipes(searchQuery, queryModel, url, queryRecipeModel){
   return new Promise((resolve, reject) => {
