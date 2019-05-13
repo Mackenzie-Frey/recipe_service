@@ -14,6 +14,16 @@ module.exports = (sequelize, DataTypes) => {
       through: models.BoringQueryRecipe,
       foreignKey: 'RecipeId'
     })
+    Recipe.hasMany(models.HeartAttackQueryRecipe)
+    Recipe.belongsToMany(models.HeartAttackQuery, {
+      through: models.HeartAttackQueryRecipe,
+      foreignKey: 'RecipeId'
+    })
+    Recipe.hasMany(models.BBQueryRecipe)
+    Recipe.belongsToMany(models.BBQuery, {
+      through: models.BBQueryRecipe,
+      foreignKey: 'RecipeId'
+    })
   };
   return Recipe;
 };

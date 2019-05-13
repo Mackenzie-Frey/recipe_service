@@ -37,6 +37,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('BoringQueryRecipe');
+    return queryInterface.dropTable('BoringQueryRecipes');
   }
 };
