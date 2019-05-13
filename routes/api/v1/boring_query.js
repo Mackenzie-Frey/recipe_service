@@ -5,6 +5,8 @@ var BoringQuery = require('../../../models').BoringQuery;
 var BoringQueryRecipe = require('../../../models').BoringQueryRecipe;
 var HeartAttackQuery = require('../../../models').HeartAttackQuery;
 var HeartAttackQueryRecipe = require('../../../models').HeartAttackQueryRecipe;
+var BBQuery = require('../../../models').BBQuery;
+var BBQueryRecipe = require('../../../models').BBQueryRecipe;
 const fetch = require('node-fetch');
 var pry = require('pryjs');
 
@@ -43,6 +45,29 @@ router.get("/heart-attack", async (req, res, next) => {
 
     return findOrFetchRecipes(searchQuery, HeartAttackQuery, url, HeartAttackQueryRecipe)
     .then(recipes => {
+      res.status(200).send(JSON.stringify(recipes))
+    })
+    .catch(error => {
+      res.status(404).send({error: error})
+    })
+  }
+});
+
+router.get("/bang-for-your-buck", async (req, res, next) => {
+  res.setHeader("Content-Type", "application/json");
+  if (!req.query.query) {
+    res.status(404).send({error: "Missing recipe search query."})
+  } else {
+    const searchQuery = req.query.query.toLowerCase();
+    // create url for Edamam using the query from the param
+    const appId = process.env.EDAMAM_ID
+    const appKey = process.env.EDAMAM_KEY
+    const recipeFilter = '&calories=2000-999999&time=1-10'
+    var url = `https://api.edamam.com/search?q=${searchQuery}&app_id=${appId}&app_key=${appKey}&to=30` + recipeFilter
+
+    return findOrFetchRecipes(searchQuery, BBQuery, url, BBQueryRecipe)
+    .then(recipes => {
+      recipes.sort((a, b) => a.totalTime - b.totalTime);
       res.status(200).send(JSON.stringify(recipes))
     })
     .catch(error => {
