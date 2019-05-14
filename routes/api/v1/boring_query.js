@@ -171,6 +171,7 @@ function createRecipe(recipe, query, queryRecipeModel){
     Recipe.findOrCreate({
       where: {name: recipe.recipe.label},
       defaults: {
+        name: recipe.recipe.label,
         url: recipe.recipe.url,
         yield: recipe.recipe.yield,
         calories: Math.round((recipe.recipe.calories / recipe.recipe.yield)),
@@ -179,31 +180,10 @@ function createRecipe(recipe, query, queryRecipeModel){
       }
     })
     .then(recipe => {
-      if(queryRecipeModel === BoringQueryRecipe){
-        queryRecipeModel.create({
-          BoringQueryId: query.id,
-          RecipeId: recipe[0].id
-        })
-        .then(() => {
-          resolve(recipe[0])
-        })
-      }else if(queryRecipeModel === HeartAttackQueryRecipe){
-        queryRecipeModel.create({
-          HeartAttackQueryId: query.id,
-          RecipeId: recipe[0].id
-        })
-        .then(() => {
-          resolve(recipe[0])
-        })
-      }else if(queryRecipeModel === BBQueryRecipe){
-        queryRecipeModel.create({
-          BBQueryId: query.id,
-          RecipeId: recipe[0].id
-        })
-        .then(() => {
-          resolve(recipe[0])
-        })
-      }
+      query.addRecipe(recipe[0])
+      .then(() => {
+        resolve(recipe[0])
+      })
     })
     .catch((error) => {
       reject(error)
