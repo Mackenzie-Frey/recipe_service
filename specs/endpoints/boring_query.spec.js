@@ -45,7 +45,7 @@ describe('BoringQuery Recipe index API', () => {
       });
     });
 
-    test.skip('it should return a 404 status and error message if query does not exist', () => {
+    test('it should return a 404 status and error message if query does not exist', () => {
       return request(app).get("/api/v1/recipes").then(response => {
         expect(response.status).toBe(404)
         expect(response.body).toBe({
@@ -57,7 +57,7 @@ describe('BoringQuery Recipe index API', () => {
     //Test repeat query. Same response as original.
     //Test database entries after and that number of entries in database hasn't changed.
 
-    test.skip('it should return a 404 status when unsuccessful', () => {
+    test('it should return a 404 status when unsuccessful', () => {
       return request(app).get("/bad_path").then(response => {
         expect(response.statusCode).toBe(404)
       });
