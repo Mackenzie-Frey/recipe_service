@@ -12,9 +12,9 @@ describe('BBQuery Recipe index API', () => {
     test('it should return a 200 status', () => {
       return request(app).get("/api/v1/recipes/bang-for-your-buck?query=chicken").then(response => {
         expect(response.status).toBe(200)
-        expect(response.body).toBeInstanceOf(Array),
-        expect(response.body.length).toEqual(10),
-        expect(Object.keys(response.body[0])).toContain('id'),
+        expect(response.body).toBeInstanceOf(Array)
+        expect(response.body.length).toEqual(10)
+        expect(Object.keys(response.body[0])).toContain('id')
         expect(Object.keys(response.body[0])).toContain('url')
         expect(Object.keys(response.body[0])).toContain('yield')
         expect(Object.keys(response.body[0])).toContain('calories')
@@ -22,6 +22,15 @@ describe('BBQuery Recipe index API', () => {
         expect(Object.keys(response.body[0])).toContain('totalTime')
         expect(Object.keys(response.body[0])).toContain('name')
       });
+    });
+
+    test('it should return a 404 status and error message if query does not exist', () => {
+      return request(app).get("/api/v1/recipes/bang-for-your-buck").then(response => {
+        expect(response.status).toBe(404)
+        expect(response.body).toBe({
+          error: "Missing recipe search query."
+        })
+      })
     });
 
     //Test for query, recipes and queryRecipe additions to database (1, 30, 30 respectively)

@@ -24,6 +24,15 @@ describe('HeartAttackQuery Recipe index API', () => {
       });
     });
 
+    test('it should return a 404 status and error message if query does not exist', () => {
+      return request(app).get("/api/v1/recipes/heart-attack").then(response => {
+        expect(response.status).toBe(404)
+        expect(response.body).toBe({
+          error: "Missing recipe search query."
+        })
+      })
+    });
+
     //Test for query, recipes and queryRecipe additions to database (1, 30, 30 respectively)
     //Test repeat query. Same response as original.
     //Test database entries after and that number of entries in database hasn't changed.
