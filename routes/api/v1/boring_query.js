@@ -8,7 +8,6 @@ var HeartAttackQueryRecipe = require('../../../models').HeartAttackQueryRecipe;
 var BBQuery = require('../../../models').BBQuery;
 var BBQueryRecipe = require('../../../models').BBQueryRecipe;
 const fetch = require('node-fetch');
-var pry = require('pryjs');
 
 router.get("/", async (req, res, next) => {
   res.setHeader("Content-Type", "application/json");
