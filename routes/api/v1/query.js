@@ -136,7 +136,7 @@ function getRecipes(url){
   return new Promise((resolve, reject) => {
     fetch(url)
     .then(response => {
-      if (response.status = 200){
+      if (response.status === 200){
         resolve(response.json())
       }else{
         reject(result.error_message)
@@ -191,3 +191,4 @@ function createRecipe(recipe, query, queryRecipeModel){
 };
 
 module.exports = router;
+module.exports.getRecipes = getRecipes;
