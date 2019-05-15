@@ -12,7 +12,7 @@ describe('BoringQuery Recipe index API', () => {
       specHelper.testSetup()
     });
 
-    test('it should return a 200 status', () => {
+    test('it should return a 200 status', async () => {
       BoringQuery.findAll().then(response => {
         expect(response.length).toBe(0)
       })
@@ -22,35 +22,32 @@ describe('BoringQuery Recipe index API', () => {
       Recipe.findAll().then(response => {
         expect(response.length).toBe(0)
       })
-      return request(app).get("/api/v1/recipes?query=chicken").then(response => {
-        expect(response.status).toBe(200)
-        expect(response.body).toBeInstanceOf(Array)
-        expect(response.body.length).toEqual(10)
-        expect(Object.keys(response.body[0])).toContain('id')
-        expect(Object.keys(response.body[0])).toContain('url')
-        expect(Object.keys(response.body[0])).toContain('yield')
-        expect(Object.keys(response.body[0])).toContain('calories')
-        expect(Object.keys(response.body[0])).toContain('image')
-        expect(Object.keys(response.body[0])).toContain('totalTime')
-        expect(Object.keys(response.body[0])).toContain('name')
-        BoringQuery.findAll().then(response => {
-          expect(response.length).toBe(1)
-        })
-        BoringQueryRecipe.findAll().then(response => {
-          expect(response.length).toBe(30)
-        })
-        return Recipe.findAll().then(response => {
-          expect(response.length).not.toBeLessThan(15)
-        })
-      });
+      const response = await request(app).get("/api/v1/recipes?query=chicken")
+      expect(response.status).toBe(200)
+      expect(response.body).toBeInstanceOf(Array)
+      expect(response.body.length).toEqual(10)
+      expect(Object.keys(response.body[0])).toContain('id')
+      expect(Object.keys(response.body[0])).toContain('url')
+      expect(Object.keys(response.body[0])).toContain('yield')
+      expect(Object.keys(response.body[0])).toContain('calories')
+      expect(Object.keys(response.body[0])).toContain('image')
+      expect(Object.keys(response.body[0])).toContain('totalTime')
+      expect(Object.keys(response.body[0])).toContain('name')
+
+      const boringQuery = await BoringQuery.findAll()
+      expect(boringQuery.length).toBe(1)
+
+      const boringQueryRecipe = await BoringQueryRecipe.findAll()
+      expect(boringQueryRecipe.length).toBe(30)
+
+      const recipe = await Recipe.findAll()
+      expect(recipe.length).not.toBeLessThan(15)
     });
 
     test('it should return a 404 status and error message if query does not exist', () => {
-      return request(app).get("/api/v1/recipes").then(response => {
+      return request(app).get("/api/v1/recipes/heart-attack").then(response => {
         expect(response.status).toBe(404)
-        expect(response.body).toBe({
-          error: "Missing recipe search query."
-        })
+        expect(response.body.error).toBe('Missing recipe search query.')
       })
     });
 
