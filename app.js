@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var boringQueryRouter = require('./routes/api/v1/boring_query');
+var boringQueryRouter = require('./routes/api/v1/query');
 
 var app = express();
 
