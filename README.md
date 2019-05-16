@@ -199,6 +199,7 @@ body:
 * shelljs
 * supertest
 * beautify
+* Circle CI
 
 ## How to Contribute
 
