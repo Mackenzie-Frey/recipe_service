@@ -21,6 +21,12 @@ $ npx sequelize db:migrate # Runs migrations for the database setup
 $ npx sequelize db:seed:all # Runs seed file for seeding the database
 ```
 
+If Postgres was locally installed using homebrew, run the command:
+```
+/usr/local/opt/postgres/bin/createuser -s postgres
+```
+This will create a new postgres user by the name of postgres. This enables all collaborators to utilize the same username and enables the `config.json` file functionality for the database username.
+
 #### Environment Variable Setup:
 
  Sign Up for the following API:
@@ -33,8 +39,14 @@ EDAMAM_KEY=<edamam_key>
 ```
 
 ## Running Tests
-
 To run the test suite, execute the following command: `npm test`. The tests will automatically run each time an update is made to the application.
+
+## Test Coverage
+To run a test coverage report execute the command: `npx jest --coverage`. The report will look like the following.
+
+![Alt text](./public/images/test_coverage.png?raw=true "Test Coverage Report")
+
+Navigate to the project directory of `coverage/lcov-report/recipe_service/`. Copy the file path and execute the command: `open insert_file_path`. This will open the specific coverage report in the default browser.
 
 ## Deployment
 
@@ -174,13 +186,6 @@ body:
   error: "Missing recipe search query."
 }
 ```
-
-## Test Coverage
-To run a test coverage report execute the command: `npx jest --coverage`. The report will look like the following.
-
-![Alt text](./public/images/test_coverage.png?raw=true "Test Coverage Report")
-
-Navigate to the project directory of `coverage/lcov-report/recipe_service/`. Copy the file path and execute the command: `open insert_file_path`. This will open the specific coverage report in the default browser.
 
 ## Tools
 * Edamam API Endpoint
