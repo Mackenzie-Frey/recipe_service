@@ -1,9 +1,7 @@
 # README
 
 ## Description
-Recipe Service is part of a 10-day, paired project during module four of four, of Turing School's Back-End Engineering Program. <<<<<<-------- change this some ------- It is a micro service <<<<-----
-
-<!-- Quantified Self is a web application designed to consume/produce API's. The application utilizes Node.js, Expess and Sequelize, with a PostgreSQL database, to consume the  --------->>>>>>>>>> Add here. -->
+Recipe Service is part of a 10-day, paired project during module four of four, of Turing School's Back-End Engineering Program. Recipe Service is a microservice which consumes the Edamam Recipe API and is utilized by [Quantified Self](https://github.com/nagerz/quantified_self). The application utilizes Node.js, Expess, Sequelize, PostgreSQL, and Jest.
 
 #### [**_View Recipe Service in Production_**](https://sq-recipe-service.herokuapp.com/) </br>
 
@@ -17,10 +15,10 @@ To run Recipe Service on a local machine, navigate to the directory in which you
 ```
 $ git clone git@github.com:Mackenzie-Frey/recipe_service.git
 $ cd recipe_service
-$ npm install # Install dependencies
-$ npx sequelize db:create # Create PostgreSQL Database
-$ npx sequelize db:migrate # Run migrations for database setup
-$ npx sequelize db:seed:all # Run seed file for seeding database
+$ npm install # Installs dependencies
+$ npx sequelize db:create # Creates PostgreSQL Database
+$ npx sequelize db:migrate # Runs migrations for the database setup
+$ npx sequelize db:seed:all # Runs seed file for seeding the database
 ```
 
 #### Environment Variable Setup:
@@ -87,6 +85,13 @@ body:
 }
 ```
 
+## Test Coverage
+To run a test coverage report execute the command: `npx jest --coverage`. The report will look like the following.
+
+![Alt text](./public/images/test_coverage.png?raw=true "Test Coverage Report")
+
+Navigate to the project directory of `coverage/lcov-report/recipe_service/`. Copy the file path and execute the command: `open insert_file_path`. This will open the specific coverage report in the default browser.
+
 ## Tools
 * Edamam API Endpoint
 * Postman
@@ -99,7 +104,6 @@ body:
 * shelljs
 * supertest
 * beautify
------->>>>>>>> add more tools (APIs used)
 
 ## Known Issues
 ------------>>>>>>>>>>> Add here
