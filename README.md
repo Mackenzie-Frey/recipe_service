@@ -6,7 +6,7 @@ Recipe Service is part of a 10-day, paired project during module four of four, o
 #### [**_View Recipe Service in Production_**](https://sq-recipe-service.herokuapp.com/) </br>
 
 ### Schema
-<!-- ![Alt text](./public/images/schema.png?raw=true "Database Schema") -->
+![Alt text](./public/images/schema.png?raw=true "Database Schema")
 
 ## Getting Started
 
@@ -133,3 +133,78 @@ Navigate to the project directory of `coverage/lcov-report/recipe_service/`. Cop
 ### Special Recognition
 * [Dione Wilson](https://github.com/dionew1)
 * [Cory Westerfield](https://github.com/corywest)
+
+
+
+<!-- Keep the below comment block in case the schema diagram need to be altered.
+This can be done by visiting https://dbdiagram.io/d, creating a new diagram/ deleting
+the diagram in the left hand bar and pasting in the below.
+
+Table BoringQueries {
+  id int [pk]
+  query string
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table BBQueries {
+  id int [pk]
+  query string
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table HeartAttackQueries {
+  id int [pk]
+  query string
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table BoringQueryRecipes {
+  id int [pk]
+  BoringQueryId int
+  RecipeId int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table HeartAttackQueryRecipes {
+  id int [pk]
+  HeartAttackQueryId int
+  RecipeId int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table BBQueryRecipes {
+  id int [pk]
+  BBQueryId int
+  RecipeId int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Recipes {
+  id int [pk]
+  name string
+  url string
+  image string
+  yield string
+  calories string
+  totalTime string
+  created_at timestamp
+  updated_at timestamp
+}
+
+Ref: "BBQueryRecipes"."BBQueryId" < "BBQueries"."id"
+
+Ref: "HeartAttackQueryRecipes"."HeartAttackQueryId" < "HeartAttackQueries"."id"
+
+Ref: "BoringQueryRecipes"."BoringQueryId" < "BoringQueries"."id"
+
+Ref: "BoringQueryRecipes"."RecipeId" < "Recipes"."id"
+
+Ref: "HeartAttackQueryRecipes"."RecipeId" < "Recipes"."id"
+
+Ref: "BBQueryRecipes"."RecipeId" < "Recipes"."id" -->
