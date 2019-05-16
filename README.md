@@ -46,42 +46,132 @@ The application provides the following endpoints:
 
 #### Endpoints
 
-###### Recipe Index Endpoint
------------->>>>>> INSERT THINGS HERE <<<<<---------- can be retrieved via a `GET` request to the `api/v1/recipes?query=chicken` endpoint.
+##### Recipe Index Endpoint
+Recipes can be retrieved via a `GET` request to the `api/v1/recipes?query=food` endpoint, where `food` is substituted for a food item ie `chocolate`.
 
-If the request is successful, the application will return an array containing food item objects, along with a status code of 200.
+If the request is successful, the application will retrieve a list of up to 10 recipes containing chocolate, sorted by descending calories.
 
 ``` HTTP
 status: 200
 body:
+[
+    {
+        "id": 216,
+        "name": "Orange Crush Cake",
+        "url": "http://thepioneerwoman.com/cooking/2014/10/orange-crush-cake/",
+        "yield": "12",
+        "calories": 720,
+        "image": "https://www.edamam.com/web-img/99c/99cc74f1f8e0fe7ac2842e716f7b9d26.jpg",
+        "totalTime": "0",
+        "updatedAt": "2019-05-16T02:37:16.666Z",
+        "createdAt": "2019-05-16T02:37:16.666Z"
+    },
+    {
+        "id": 221,
+        "name": "Orange Marmalade",
+        "url": "https://www.menshealth.com/recipes/orange-marmalade",
+        "yield": "1",
+        "calories": 603,
+        "image": "https://www.edamam.com/web-img/ee3/ee3f77f4e3f80ac79f297ca4fbc8d47b.jpg",
+        "totalTime": "0",
+        "updatedAt": "2019-05-16T02:37:16.722Z",
+        "createdAt": "2019-05-16T02:37:16.722Z"
+    }
+]
+```
+
+If the request is unsuccessful due to a missing search query, the application will return the response of:
+``` HTTP
+status: 404
+body:
 {
-  INSERT THING HERE <<<<<<<<<<<--------------------
+  error: "Missing recipe search query."
 }
 ```
 
-###### Heart Attack Recipe Index Endpoint
------------->>>>>> INSERT THINGS HERE <<<<<---------- can be retrieved via a `GET` request to the `api/v1/recipes/heart-attack?query=chicken` endpoint.
+##### Heart Attack Recipe Index Endpoint
+Recipes with high calories, sodium, fat, and sugar can be retrieved via a `GET` request to the `api/v1/recipes/heart-attack?query=chocolate` endpoint.
 
-If the request is successful, the application will return an array containing food item objects, along with a status code of 200.
+If the request is successful, the application will retrieve a list of up to 10 recipes containing chocolate, sorted by descending calories.
 
 ``` HTTP
 status: 200
 body:
+[
+    {
+        "id": 232,
+        "name": "Chocolate Caramel Crunch Almonds recipes",
+        "url": "https://smittenkitchen.com/2016/12/chocolate-caramel-crunch-almonds-new-kitchen-favorites/",
+        "yield": "2",
+        "calories": 18494,
+        "image": "https://www.edamam.com/web-img/0b4/0b43639f2689758b795be49f82d20808",
+        "totalTime": "60",
+        "updatedAt": "2019-05-16T02:45:13.020Z",
+        "createdAt": "2019-05-16T02:45:13.020Z"
+    },
+    {
+        "id": 240,
+        "name": "Chocolate Game Board",
+        "url": "https://www.foodnetwork.com/recipes/chocolate-game-board-recipe-3381296",
+        "yield": "1",
+        "calories": 18452,
+        "image": "https://www.edamam.com/web-img/597/597d46f5482cbddd36edf61ebb769571.jpeg",
+        "totalTime": "240",
+        "updatedAt": "2019-05-16T02:45:13.141Z",
+        "createdAt": "2019-05-16T02:45:13.141Z"
+    }
+]
+```
+
+If the request is unsuccessful due to a missing search query, the application will return the response of:
+``` HTTP
+status: 404
+body:
 {
-  INSERT THING HERE <<<<<<<<<<<--------------------
+  error: "Missing recipe search query."
 }
 ```
 
-###### Bang for your Buck Recipe Index Endpoint
------------->>>>>> INSERT THINGS HERE <<<<<---------- can be retrieved via a `GET` request to the `/api/v1/recipes/bang-for-your-buck?query=chicken` endpoint.
+##### Bang for your Buck Recipe Index Endpoint
+Recipes that are high in calories, but low in total preparation time can be retrieved via a `GET` request to the `/api/v1/recipes/bang-for-your-buck?query=chocolate` endpoint.
 
-If the request is successful, the application will return an array containing food item objects, along with a status code of 200.
+If the request is successful, the application will retrieve a list of up to 10 recipes containing chocolate, sorted by descending total prep time and descending calories.
 
 ``` HTTP
 status: 200
 body:
+[
+    {
+        "id": 280,
+        "name": "Chocolate Roulade",
+        "url": "https://drupal.eatsmarter.com/recipes/chocolate-roulade-0",
+        "yield": "1",
+        "calories": 3427,
+        "image": "https://www.edamam.com/web-img/e0e/e0efd3e4efa92dfe492b17dbfc258c27.jpg",
+        "totalTime": "1",
+        "updatedAt": "2019-05-16T02:46:56.050Z",
+        "createdAt": "2019-05-16T02:46:56.050Z"
+    },
+    {
+        "id": 288,
+        "name": "Coconut and Dark Chocolate Chunk Ice Cream recipes",
+        "url": "http://www.creative-culinary.com/coconut-and-dark-chocolate-chunk-ice-cream/",
+        "yield": "1",
+        "calories": 8781,
+        "image": "https://www.edamam.com/web-img/3c0/3c0bf254228465e6297aa40e87241c47",
+        "totalTime": "5",
+        "updatedAt": "2019-05-16T02:46:56.098Z",
+        "createdAt": "2019-05-16T02:46:56.098Z"
+    }
+]
+```
+
+If the request is unsuccessful due to a missing search query, the application will return the response of:
+``` HTTP
+status: 404
+body:
 {
-  INSERT THING HERE <<<<<<<<<<<--------------------
+  error: "Missing recipe search query."
 }
 ```
 
@@ -104,9 +194,6 @@ Navigate to the project directory of `coverage/lcov-report/recipe_service/`. Cop
 * shelljs
 * supertest
 * beautify
-
-## Known Issues
------------->>>>>>>>>>> Add here
 
 ## How to Contribute
 
