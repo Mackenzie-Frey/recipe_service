@@ -56,9 +56,9 @@ To view Recipe Service in development, execute the following command from the pr
 ## Available Endpoints
 The application provides the following endpoints:
 
-#### Endpoints
+### Endpoints
 
-##### Recipe Index Endpoint
+#### Recipe Index Endpoint
 Recipes can be retrieved via a `GET` request to the `api/v1/recipes?query=food` endpoint, where `food` is substituted for a food item ie `chocolate`.
 
 If the request is successful, the application will retrieve a list of up to 10 recipes containing chocolate, sorted by descending calories.
@@ -101,7 +101,7 @@ body:
 }
 ```
 
-##### Heart Attack Recipe Index Endpoint
+#### Heart Attack Recipe Index Endpoint
 Recipes with high calories, sodium, fat, and sugar can be retrieved via a `GET` request to the `api/v1/recipes/heart-attack?query=chocolate` endpoint.
 
 If the request is successful, the application will retrieve a list of up to 10 recipes containing chocolate, sorted by descending calories.
@@ -144,7 +144,7 @@ body:
 }
 ```
 
-##### Bang for your Buck Recipe Index Endpoint
+#### Bang for your Buck Recipe Index Endpoint
 Recipes that are high in calories, but low in total preparation time can be retrieved via a `GET` request to the `/api/v1/recipes/bang-for-your-buck?query=chocolate` endpoint.
 
 If the request is successful, the application will retrieve a list of up to 10 recipes containing chocolate, sorted by descending total prep time and descending calories.
